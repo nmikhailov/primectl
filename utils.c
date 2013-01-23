@@ -10,7 +10,8 @@ void dbg_fprintf(FILE *stream, const char *fmt, ...) {
         va_start(args, fmt);
 
         fprintf(stream, "ProxyGL: ");
-        fprintf(stream, fmt, args);
+        vfprintf(stream, fmt, args);
+        va_end(args);
     }
 }
 

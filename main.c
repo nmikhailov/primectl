@@ -44,7 +44,7 @@ void load(void) {
 }
 
 void load_libraries() {
-    library_libgl = dlopen(LIBGL_PATH, RTLD_LAZY);
+    library_libgl = dlopen(LIBGL_PATH, RTLD_LAZY | RTLD_GLOBAL);
     if (!library_libgl) {
         fprintf(stderr, "Can't load libGL(%s), error: %s. Exiting.\n", LIBGL_PATH, dlerror());
         exit(1);

@@ -1,8 +1,10 @@
 CC=gcc
-CFLAGS=-Wall -shared -fPIC -Wl,-soname,GL
+CFLAGS=-Wall -shared -fPIC
 LDFLAGS=
-SOURCES=main.c utils.c functions.c
+SOURCES=libgl.c utils.c
 EXECUTABLE=libGL.so.1
+
+CFLAGS+=-DLIBS_DEFAULT="\"/usr/lib/libGL.so:/usr/lib/libglapi.so\""
 
 all: libgl
 

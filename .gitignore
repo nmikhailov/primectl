@@ -5,3 +5,6 @@
 
 *.so
 *.so.*
+
+.*project
+.settings

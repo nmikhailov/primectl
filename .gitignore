@@ -9,9 +9,13 @@
 .*project
 .settings
 
-# Vim files
+# Editors files
 *.swp
+*.bak
 
 # Auto generated headers
 defs.h
 .depends
+
+# 
+*.gch

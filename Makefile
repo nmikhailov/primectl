@@ -1,35 +1,25 @@
-CC=gcc
-CFLAGS=-W -Wall -fPIC -pedantic -std=c99 -O2
-LDFLAGS=-ldl -lpthread -shared
-SOURCES=libgl.c utils.c defs.c
-OBJECTS=$(SOURCES:.c=.o)
-EXECUTABLE=libGL.so.1
+DIRS = libGL
 
-CFLAGS+=-DLIBGL_DEFAULT="\"/usr/lib/libGL.so\""
-CFLAGS+=-D_GNU_SOURCE
+BUILDDIRS = $(DIRS:%=build-%)
+CLEANDIRS = $(DIRS:%=clean-%)
+TESTDIRS = $(DIRS:%=test-%)
 
-all: $(EXECUTABLE)
+all: $(BUILDDIRS)
+$(DIRS): $(BUILDDIRS)
+$(BUILDDIRS):
+	$(MAKE) -C $(@:build-%=%)
 
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $(EXECUTABLE)
+test: $(TESTDIRS) all
+$(TESTDIRS):
+	$(MAKE) -C $(@:test-%=%) test
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c -o $@ $<
+clean: $(CLEANDIRS)
+$(CLEANDIRS):
+	$(MAKE) -C $(@:clean-%=%) clean
 
-defs.c: defs.h
 
-defs.h: tools/gen.py
-	tools/gen.py /usr/include/GL/glx.h > defs.h
-
-clean:
-	rm -f $(EXECUTABLE)
-	rm -f defs.h
-	rm -f *.o
-	rm -f .depends
-
-depend: .depends
-
-.depends: $(SOURCES)
-	$(CC) $(CFLAGS) -MM $^ > .depends
-
--include .depends
+.PHONY: subdirs $(DIRS)
+.PHONY: subdirs $(BUILDDIRS)
+.PHONY: subdirs $(TESTDIRS)
+.PHONY: subdirs $(CLEANDIRS)
+.PHONY: all clean test

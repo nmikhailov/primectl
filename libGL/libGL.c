@@ -6,7 +6,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "libgl.h"
+#include "libGL.h"
 #include "utils.h"
 
 // Original libGL
@@ -15,7 +15,7 @@ void *libgl;
 // Debug state
 int debug_enabled;
 
-void load(void) {
+void on_load(void) {
     // Set debug level
     debug_enabled = getenv("PLGL_DEBUG") != NULL;
 
@@ -35,7 +35,9 @@ void load(void) {
 
 void* load_lib(const char *path) { // Load shared library
     dbg_printf("Loading %s\n", path);
-    void *lib = dlopen(path, RTLD_NOW | RTLD_GLOBAL);
+
+    // libGL requires RTLD_GLOBAL: http://dri.sourceforge.net/doc/DRIuserguide.html
+    void *lib = dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
     if (!lib) {
         err_printf("Can't load %s, error: %s. Exiting.\n", path, dlerror());
         exit(1);
@@ -57,7 +59,7 @@ void poc() {
     fclose(f);
 }
 
-void unload(void) {
+void on_unload(void) {
     dbg_printf("%s\n", "Unloading...");
     // Unload libraries
     dlclose(libgl);

@@ -1,9 +1,7 @@
 # C object files
 *.o
-
 *.lib
 *.a
-
 *.so
 *.so.*
 
@@ -16,3 +14,4 @@
 
 # Auto generated headers
 defs.h
+.depends

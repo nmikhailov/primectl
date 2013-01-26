@@ -6,28 +6,30 @@
 import sys
 import clang.cindex
 
-internal2c = {
-              "CHAR_S": "char",
-              "UCHAR": "unsigned char",
-              "DOUBLE": "double",
-              "FLOAT": "float",
-              "INT": "int",
-              "LONG": "long",
-              "LONGDOUBLE": "long double",
-              "LONGLONG": "long long",
-              "SHORT": "short",
-              "UINT": "unsigned int",
-              "ULONG": "unsigned long",
-              "ULONGLONG": "unsigned long long",
-              "VOID": "void",
-              "USHORT": "unsigned short",
-              "SCHAR": "signed char",
-              "FUNCTIONPROTO": "void*",  # Temp hack
-              "RECORD": "void*",  # Temp hack
-              }
+internal2cstr = {
+    "CHAR_S": "char",
+    "DOUBLE": "double",
+    "FLOAT": "float",
+    "FUNCTIONPROTO": "void*",  # Temp hack
+    "INT": "int",
+    "LONG": "long",
+    "LONGDOUBLE": "long double",
+    "LONGLONG": "long long",
+    "RECORD": "void*",  # Temp hack
+    "SCHAR": "signed char",
+    "SHORT": "short",
+    "UCHAR": "unsigned char",
+    "UINT": "unsigned int",
+    "ULONG": "unsigned long",
+    "ULONGLONG": "unsigned long long",
+    "USHORT": "unsigned short",
+    "VOID": "void",
+}
 
 
 def type2string(type):
+    """ Expands pointers and converts types via internal2cstr table
+    """
     suffix = ""
     while type.kind == clang.cindex.TypeKind.POINTER:
         if type.is_const_qualified():
@@ -36,17 +38,19 @@ def type2string(type):
 
         type = type.get_pointee()
 
-    if not type.kind.name in internal2c.keys():
+    if not type.kind.name in internal2cstr.keys():
         sys.stderr.write("Can't convert type %s\n" % type.kind.name)
         sys.exit(1)
 
     if type.is_const_qualified():
         suffix = "const " + suffix
 
-    return internal2c[type.kind.name] + " " + suffix
+    return internal2cstr[type.kind.name] + " " + suffix
 
 
 def get_type(type):
+    """ Converts internal clang.cindex.Type to C string representation
+    """
     type = type.get_canonical()
     if type == clang.cindex.TypeKind.INVALID:
         sys.stderr.write("Unresolved type, aborting\n")
@@ -56,6 +60,8 @@ def get_type(type):
 
 
 def print_declaration(node):
+    """ Print formated function declarations
+    """
     name = node.spelling
 
     if not name.startswith("gl"):
@@ -70,7 +76,7 @@ def print_declaration(node):
     args1 = ", ".join(args1)
     args2 = ", ".join(args2)
 
-    if node.result_type == clang.cindex.TypeKind.VOID:
+    if node.result_type.kind == clang.cindex.TypeKind.VOID:
         print "DEF_PROXY_VOID(%s, (%s), (%s))" % (name, args1, args2)
     else:
         print "DEF_PROXY(%s, %s, (%s), (%s))" % (name, ret, args1, args2)
@@ -86,7 +92,7 @@ def find_declarations(node):
     for c in node.get_children():
         find_declarations(c)
 
-
-index = clang.cindex.Index.create()
-tu = index.parse(sys.argv[1], args=["-D__attribute__(x)="])
-find_declarations(tu.cursor)
+if __name__ == '__main__':
+    index = clang.cindex.Index.create()
+    tu = index.parse(sys.argv[1], args=["-D__attribute__(x)="])
+    find_declarations(tu.cursor)

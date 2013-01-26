@@ -22,12 +22,12 @@ void load(void) {
     // Process
     dbg_printf("%s\n", "Loading libraries...");
 
-    // Load original libGL
-    libgl = load_lib(LIBGL_DEFAULT);
-
     // Connect to server
     // ...
     poc();
+
+    // Load original libGL
+    libgl = load_lib(LIBGL_DEFAULT);
 
     dbg_printf("%s\n", "Loaded");
 }

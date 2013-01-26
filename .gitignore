@@ -1,3 +1,4 @@
+# C object files
 *.o
 
 *.lib
@@ -6,5 +7,12 @@
 *.so
 *.so.*
 
+# Project settings
 .*project
 .settings
+
+# Vim files
+*.swp
+
+# Auto generated headers
+defs.h

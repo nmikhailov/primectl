@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<node name="/org/dri/PrimeCtl">
+  <interface name="org.dri.PrimeCtl">
+
+    <!-- X server communication -->
+
+    <method name="XStarting">
+      <arg type="u" name="pid" direction="in" />
+    </method>
+
+    <!--<method name="XInitialized">-->
+      <!--<arg type="u" name="pid" direction="in" />-->
+    <!--</method>-->
+
+    <!-- libGL communication -->
+
+    <method name="libglLoad">
+      <arg type="u" name="pid" direction="in" />
+      <arg type="s" name="dri_prime" direction="in" />
+
+      <arg type="u" name="new_dri_prime" direction="out" />
+    </method>
+
+    <method name="libglUnload">
+      <arg type="u" name="pid" direction="in" />
+    </method>
+
+    <!-- System events -->
+
+    <method name="systemSuspend" />
+    <method name="systemResume" />
+
+    <!-- User communication -->
+
+    <method name="getStatus">
+      <arg type="s" name="value" direction="out" />
+    </method>
+
+    <method name="getClients">
+      <!-- Returns dict X_PID->array_of_client_pids -->
+      <arg type="{uau}" name="value" direction="out" />
+    </method>
+
+    <method name="setPower">
+      <arg type="u" name="value" direction="in" />
+    </method>
+
+    <method name="reloadSettings" />
+
+    <signal name="onStatusChanged" />
+
+  </interface>
+</node>

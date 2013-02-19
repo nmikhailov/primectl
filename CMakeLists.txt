@@ -8,9 +8,9 @@ configure_file(
 )
 
 add_custom_command (
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/libGL/defs.h
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/libGL/functions.def
     COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/libGL
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen.py /usr/include/GL/glx.h > ${CMAKE_CURRENT_BINARY_DIR}/libGL/defs.h
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen.py /usr/include/GL/glx.h > ${CMAKE_CURRENT_BINARY_DIR}/libGL/functions.def
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen.py
 )
 
@@ -18,5 +18,5 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -pedantic -std=c99")
 add_definitions(-D_GNU_SOURCE)
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/libGL)
 
-add_library(GL SHARED libGL/defs.c libGL/libGL.c libGL/utils.c libGL/defs.h)
+add_library(GL SHARED libGL/defs.c libGL/libGL.c libGL/utils.c libGL/functions.def)
 target_link_libraries(GL dl)

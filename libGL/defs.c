@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <dlfcn.h>
+//#include <GL/glx.h>
 
 extern void *libgl;
 
@@ -17,6 +18,6 @@ void name args {\
     fn args2;\
 }
 
-#include "defs.h"
+#include "functions.def"
 
 #undef DEF_PROXY

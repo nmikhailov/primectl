@@ -4,31 +4,31 @@
 
     <!-- X server communication -->
 
-    <method name="XStarting">
+    <method name="hookXStarting">
       <arg type="u" name="pid" direction="in" />
     </method>
 
-    <!--<method name="XInitialized">-->
+    <!--<method name="hookXInitialized">-->
       <!--<arg type="u" name="pid" direction="in" />-->
     <!--</method>-->
 
     <!-- libGL communication -->
 
-    <method name="libglLoad">
+    <method name="hookLibglLoad">
       <arg type="u" name="pid" direction="in" />
       <arg type="s" name="dri_prime" direction="in" />
 
       <arg type="u" name="new_dri_prime" direction="out" />
     </method>
 
-    <method name="libglUnload">
+    <method name="hookLibglUnload">
       <arg type="u" name="pid" direction="in" />
     </method>
 
     <!-- System events -->
 
-    <method name="systemSuspend" />
-    <method name="systemResume" />
+    <method name="hookSystemSuspend" />
+    <method name="hookSystemResume" />
 
     <!-- User communication -->
 
@@ -37,8 +37,8 @@
     </method>
 
     <method name="getClients">
-      <!-- Returns dict X_PID->array_of_client_pids -->
-      <arg type="{uau}" name="value" direction="out" />
+      <!-- Returns map X_PID to array_of_client_pids -->
+      <arg type="a{uau}" name="value" direction="out" />
     </method>
 
     <method name="setPower">

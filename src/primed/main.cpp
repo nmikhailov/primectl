@@ -1,8 +1,9 @@
+#include <signal.h>
+#include <unistd.h>
+
 #include <climits>
 #include <cstdio>
 #include <cstdlib>
-#include <signal.h>
-#include <unistd.h>
 
 #include "dbus_server.hpp"
 #include "common/config.h"

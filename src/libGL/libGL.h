@@ -7,18 +7,16 @@
 void __attribute__ ((constructor)) on_load(void);
 void __attribute__ ((destructor)) on_unload(void);
 
-// dlopen library
-void* load_lib(const char *path);
-void poc();
-void poc_dbus();
+// Load library handle via dlopen
+void *load_lib(const char *path);
 
-// Original libGL
+// Get DRI_PRIME from server
+void dbus_onload();
+
+// Original libGL handle
 void *libgl;
 
-// Debug state
-int debug_enabled;
-
-// Dbus
+// Dbus proxy
 OrgDriPrimeCtl *dbus_proxy;
 
 #endif /* LIBGL_H_ */

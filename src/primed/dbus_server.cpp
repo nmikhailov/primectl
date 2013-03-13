@@ -1,4 +1,5 @@
 #include <iostream>
+#include <unistd.h>
 
 #include "dbus_server.hpp"
 #include "common/config.h"
@@ -12,6 +13,7 @@ void DBusServer::hookXStarting(const uint32_t& pid) {
 }
 
 uint32_t DBusServer::hookLibglLoad(const uint32_t& pid, const std::string& dri_prime) {
+    sleep(2);
     std::cout << "hookLibglLoad called. pid: " << pid << " prime env: " << dri_prime << std::endl;
     return 1;
 }

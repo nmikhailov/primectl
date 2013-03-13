@@ -1,5 +1,9 @@
 #!/bin/sh
-text=$(cat "$1")
-echo "#pragma GCC diagnostic ignored \"-Wunused-but-set-variable\"" > "$1"
-echo "$text" >> "$1"
-echo "#pragma GCC diagnostic pop" >> "$1"
+for file in $1
+do
+    text=$(cat "$file")
+    echo "#pragma GCC diagnostic ignored \"-Wunused-but-set-variable\"" > "$file"
+    echo "#pragma GCC diagnostic ignored \"-pedantic\"" >> "$file"
+    echo "$text" >> "$file"
+    echo "#pragma GCC diagnostic pop" >> "$file"
+done

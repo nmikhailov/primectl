@@ -5,7 +5,11 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
 
 # Tools
 set(TOOL_DEF_GENERATOR "${CMAKE_SOURCE_DIR}/tools/gen.py")
-set(TOOL_WRAP_NOUNUSED "${CMAKE_SOURCE_DIR}/tools/wrap.sh")
+set(TOOL_WRAP_NOWARN "${CMAKE_SOURCE_DIR}/tools/wrap.sh")
+
+# Common
+set(COMMON_SRC_DIR  "${CMAKE_SOURCE_DIR}/src/common/")
+set(FILE_DBUS_INTROSPECT  "${COMMON_SRC_DIR}/dbus-introspect.xml")
 
 # Build flags
 set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -Wall -pedantic -std=c99")
@@ -15,10 +19,11 @@ add_definitions(-D_GNU_SOURCE)
 
 # Packages
 find_package(OpenGL REQUIRED)
+find_package(PkgConfig REQUIRED)
 find_package(DBusCpp REQUIRED)
+find_package(Glib REQUIRED)
 
 #
-set(COMMON_SRC_DIR  "${CMAKE_SOURCE_DIR}/src/common/")
 include_directories("${CMAKE_SOURCE_DIR}/src/")
 
 add_subdirectory("src/libGL")

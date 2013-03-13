@@ -18,6 +18,6 @@ void name args {\
     fn args2;\
 }
 
-#include "functions.def"
+#include "glx.def"
 
 #undef DEF_PROXY

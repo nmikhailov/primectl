@@ -8,23 +8,27 @@
 
 #include "libGL.h"
 #include "utils.h"
-
-// Original libGL
-void *libgl;
-
-// Debug state
-int debug_enabled;
+#include "common/config.h"
 
 void on_load(void) {
+    GError *error = NULL;
+
     // Set debug level
     debug_enabled = getenv("PLGL_DEBUG") != NULL;
 
-    // Process
-    dbg_printf("%s\n", "Loading libraries...");
+    // Connect to dbus
+    g_type_init();
+    dbus_proxy = org_dri_prime_ctl_proxy_new_for_bus_sync(G_BUS_TYPE_SESSION,
+            G_DBUS_OBJECT_MANAGER_CLIENT_FLAGS_NONE, DBUS_SERVER_NAME, DBUS_SERVER_PATH, NULL, &error);
+    if (dbus_proxy == NULL) {
+        err_printf("%s\n", "Failed to create dbus manager");
+        exit(1);
+    }
 
     // Connect to server
-    // ...
-    poc();
+    dbg_printf("%s\n", "Loading libraries...");
+    /*poc();*/
+    poc_dbus();
 
     // Load original libGL
     libgl = load_lib(LIBGL_DEFAULT);
@@ -59,10 +63,33 @@ void poc() {
     fclose(f);
 }
 
+void poc_dbus() {
+    GError *error;
+    guint prime_val = -1;
+    if (!org_dri_prime_ctl_call_hook_libgl_load_sync(dbus_proxy, getpid(), getenv("DRI_PRIME"), &prime_val, NULL, &error)) {
+        err_printf("%s\n", "Can't send hook_load");
+        exit(1);
+    }
+
+    if (prime_val != -1) {
+        char buff[256];
+        snprintf(buff, 256, "%d", prime_val);
+        setenv("DRI_PRIME", buff, 1);
+    } else {
+        unsetenv("DRI_PRIME");
+    }
+}
+
 void on_unload(void) {
     dbg_printf("%s\n", "Unloading...");
+
+    // Send dbus message
+    org_dri_prime_ctl_call_hook_libgl_unload(dbus_proxy, getpid(), NULL, NULL, NULL);
+    /*g_object_unref(dbus_proxy);*/
+
     // Unload libraries
     dlclose(libgl);
+
     dbg_printf("%s\n", "Unloaded");
 }
 

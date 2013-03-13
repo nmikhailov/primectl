@@ -12,11 +12,12 @@ void DBusServer::hookXStarting(const uint32_t& pid) {
 }
 
 uint32_t DBusServer::hookLibglLoad(const uint32_t& pid, const std::string& dri_prime) {
-    return 3;
+    std::cout << "hookLibglLoad called. pid: " << pid << " prime env: " << dri_prime << std::endl;
+    return 1;
 }
 
 void DBusServer::hookLibglUnload(const uint32_t& pid) {
-
+    std::cout << "hookLibglUnload called. pid: " << pid << std::endl;
 }
 
 void DBusServer::hookSystemSuspend() {

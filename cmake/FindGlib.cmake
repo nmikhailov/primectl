@@ -1,52 +1,41 @@
-pkg_check_modules(GLIB_PKG glib-2.0)
+# - Try to find Glib-2.0 (with gobject)
+# Once done, this will define
+#
+# Glib_FOUND - system has Glib
+# Glib_INCLUDE_DIRS - the Glib include directories
+# Glib_LIBRARIES - link these to use Glib
 
-if (GLIB_PKG_FOUND)
-  find_path(GLIB_INCLUDE_DIR  NAMES glib.h PATH_SUFFIXES glib-2.0
-    PATHS
-    ${GLIB_PKG_INCLUDE_DIRS}
-    /usr/include/glib-2.0
-    /usr/include
-    /usr/local/include
-    )
-  find_path(GLIB_CONFIG_INCLUDE_DIR NAMES glibconfig.h PATHS ${GLIB_PKG_LIBDIR} PATH_SUFFIXES glib-2.0/include)
-  find_library(GLIB_LIBRARIES2 NAMES glib-2.0
-    PATHS
-    ${GLIB_PKG_LIBRARY_DIRS}
-    /usr/lib
-    /usr/local/lib
-    )
+include(LibFindMacros)
 
-  find_library(GOBJECT_LIBRARIES NAMES gobject-2.0
-    PATHS
-    ${GLIB_PKG_LIBRARY_DIRS}
-    /usr/lib
-    /usr/local/lib
-    )
+# Use pkg-config to get hints about paths
+libfind_pkg_check_modules(Glib_PKGCONF glib-2.0)
 
-  find_library(GTHREAD_LIBRARIES NAMES gthread-2.0
-    PATHS
-    ${GLIB_PKG_LIBRARY_DIRS}
-    /usr/lib
-    /usr/local/lib
-    )
+# Main include dir
+find_path(Glib_INCLUDE_DIR
+  NAMES glib.h
+  PATHS ${Glib_PKGCONF_INCLUDE_DIRS}
+  PATH_SUFFIXES glib-2.0
+)
 
-  set(GLIB_LIBRARIES ${GLIB_LIBRARIES2} ${GOBJECT_LIBRARIES} ${GTHREAD_LIBRARIES}) 
+# Glib-related libraries also use a separate config header, which is in lib dir
+find_path(GlibConfig_INCLUDE_DIR
+  NAMES glibconfig.h
+  PATHS ${Glib_PKGCONF_INCLUDE_DIRS} /usr
+  PATH_SUFFIXES lib/glib-2.0/include
+)
 
-else (GLIB_PKG_FOUND)
-  message (FATAL_ERROR "pkg-config is needed")
-  return()
-endif (GLIB_PKG_FOUND)
+# Finally the library itself
+find_library(Glib_LIBRARY
+  NAMES glib-2.0
+  PATHS ${Glib_PKGCONF_LIBRARY_DIRS}
+)
+find_library(Gobject_LIBRARY
+  NAMES gobject-2.0
+  PATHS ${Glib_PKGCONF_LIBRARY_DIRS}
+)
 
-if (GLIB_INCLUDE_DIR AND GLIB_CONFIG_INCLUDE_DIR AND GLIB_LIBRARIES)
-  set(GLIB_INCLUDE_DIRS ${GLIB_INCLUDE_DIR} ${GLIB_CONFIG_INCLUDE_DIR})
-endif (GLIB_INCLUDE_DIR AND GLIB_CONFIG_INCLUDE_DIR AND GLIB_LIBRARIES)
-
-if(GLIB_INCLUDE_DIRS AND GLIB_LIBRARIES)
-  set(GLIB_FOUND TRUE CACHE INTERNAL "glib-2.0 found")
-  message(STATUS "Found glib-2.0: ${GLIB_INCLUDE_DIR}, ${GLIB_LIBRARIES}")
-else(GLIB_INCLUDE_DIRS AND GLIB_LIBRARIES)
-  set(GLIB_FOUND FALSE CACHE INTERNAL "glib-2.0 found")
-  message(STATUS "glib-2.0 not found.")
-endif(GLIB_INCLUDE_DIRS AND GLIB_LIBRARIES)
-
-mark_as_advanced(GLIB_INCLUDE_DIR GLIB_CONFIG_INCLUDE_DIR GLIB_INCLUDE_DIRS GLIB_LIBRARIES)
+# Set the include dir variables and the libraries and let libfind_process do the rest.
+# NOTE: Singular variables for this library, plural for libraries this this lib depends on.
+set(Glib_PROCESS_INCLUDES Glib_INCLUDE_DIR GlibConfig_INCLUDE_DIR)
+set(Glib_PROCESS_LIBS Glib_LIBRARY Gobject_LIBRARY)
+libfind_process(Glib)

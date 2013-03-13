@@ -18,8 +18,10 @@ void on_load(void) {
 
     // Connect to dbus
     g_type_init();
+
     dbus_proxy = org_dri_prime_ctl_proxy_new_for_bus_sync(G_BUS_TYPE_SESSION,
-            G_DBUS_OBJECT_MANAGER_CLIENT_FLAGS_NONE, DBUS_SERVER_NAME, DBUS_SERVER_PATH, NULL, &error);
+            0, DBUS_SERVER_NAME, DBUS_SERVER_PATH, NULL, &error);
+
     if (dbus_proxy == NULL) {
         err_printf("%s\n", "Failed to create dbus manager");
         exit(1);
@@ -64,10 +66,18 @@ void poc() {
 }
 
 void poc_dbus() {
-    GError *error;
+    GError *error = NULL;
     guint prime_val = -1;
-    if (!org_dri_prime_ctl_call_hook_libgl_load_sync(dbus_proxy, getpid(), getenv("DRI_PRIME"), &prime_val, NULL, &error)) {
+
+    gchar *prime_old = getenv("DRI_PRIME");
+    if (prime_old == NULL) {
+        prime_old = "";
+    }
+
+    if (!org_dri_prime_ctl_call_hook_libgl_load_sync(dbus_proxy, getpid(), prime_old, &prime_val, NULL, &error)) {
         err_printf("%s\n", "Can't send hook_load");
+        g_printerr("Error : %s", error->message);
+        g_error_free(error);
         exit(1);
     }
 
@@ -75,8 +85,12 @@ void poc_dbus() {
         char buff[256];
         snprintf(buff, 256, "%d", prime_val);
         setenv("DRI_PRIME", buff, 1);
+
+        dbg_printf("DRI_PRIME changed to: %s\n", buff);
     } else {
         unsetenv("DRI_PRIME");
+
+        dbg_printf("%s\n", "DRI_PRIME unset");
     }
 }
 

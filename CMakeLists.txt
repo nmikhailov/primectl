@@ -22,6 +22,7 @@ find_package(OpenGL REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(DBusCpp REQUIRED)
 find_package(Glib REQUIRED)
+find_package(GIO REQUIRED)
 
 #
 include_directories("${CMAKE_SOURCE_DIR}/src/")

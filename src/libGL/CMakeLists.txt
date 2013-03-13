@@ -28,8 +28,7 @@ add_custom_command (
 )
 # libGL
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${GLIB_INCLUDE_DIRS})
-include_directories("/usr/include/gio-unix-2.0/")
+include_directories(${GLIB_INCLUDE_DIRS} ${GIO_INCLUDE_DIRS})
 
 add_library(GL SHARED ${LIBGL_SRC} ${FILE_GEN_GL_DEF} ${FILES_GEN_DBUS})
-target_link_libraries(GL dl ${GLIB_LIBRARIES} gio-2.0)
+target_link_libraries(GL dl ${GLIB_LIBRARIES} ${GIO_LIBRARIES})

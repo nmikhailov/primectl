@@ -1,4 +1,5 @@
-# Grabbed from: https://github.com/nathansamson/Bacsy-DBus/blob/master/cmake/FindDBusCpp.cmake
+# From: https://github.com/nathansamson/Bacsy-DBus/blob/master/cmake/FindDBusCpp.cmake
+#
 # Written by Nathan Samson <nathansamson@gmail.com>, 2011
 #
 # License: Public domain.

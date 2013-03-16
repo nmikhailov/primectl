@@ -1,0 +1,7 @@
+DEF_PROXY(gl_test1, sptr1, (int farg1, char *farg2, sptr2 farg3), (farg1, farg2, farg3), return)
+DEF_PROXY(gl_test2, int*, (const int **farg1, int farg2, csptr3 farg3), (farg1, farg2, farg3), return)
+DEF_PROXY(gl_test3, int**, (int farg1[8], const int *farg2[]), (farg1, farg2), return)
+DEF_PROXY(gl_test4, void, (const struct X **farg1), (farg1),)
+DEF_PROXY(gl_test5, void, (int arg0, char* arg1), (arg0, arg1),)
+DEF_PROXY(gl_test6, void BRACE_START *, (const int *farg1 BRACE_END BRACE_END BRACE_START char*), (farg1), return)
+DEF_PROXY(gl_test7, void, (const double *farg1[16]), (farg1),)

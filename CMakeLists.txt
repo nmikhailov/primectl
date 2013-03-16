@@ -4,7 +4,7 @@ project(primectl)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
 
 # Tools
-set(TOOL_DEF_GENERATOR "${CMAKE_SOURCE_DIR}/tools/gen.py")
+set(TOOL_DEF_GENERATOR "${CMAKE_SOURCE_DIR}/tools/gen2.py")
 set(TOOL_WRAP_NOWARN "${CMAKE_SOURCE_DIR}/tools/wrap.sh")
 
 # Common
@@ -14,7 +14,6 @@ set(FILE_DBUS_INTROSPECT  "${COMMON_SRC_DIR}/dbus-introspect.xml")
 # Build flags
 set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -Wall -pedantic -std=c99")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -std=c++11")
-
 add_definitions(-D_GNU_SOURCE)
 
 # Packages
@@ -24,8 +23,9 @@ find_package(DBusCpp REQUIRED)
 find_package(Glib REQUIRED)
 find_package(GIO REQUIRED)
 
-#
-include_directories("${CMAKE_SOURCE_DIR}/src/")
+# Testing
+enable_testing()
 
-add_subdirectory("src/libGL")
-add_subdirectory("src/primed")
+# Subdirectories
+add_subdirectory("src")
+add_subdirectory("tests")

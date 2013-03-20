@@ -14,13 +14,7 @@ set(FILE_GEN_GL_DEF "${CMAKE_CURRENT_BINARY_DIR}/glx.def")
 
 add_custom_command (
     OUTPUT ${FILE_GEN_GL_DEF}
-    COMMAND ${TOOL_DEF_GENERATOR}
-        #${OPENGL_INCLUDE_DIR}/GL/glew.h
-        ${OPENGL_INCLUDE_DIR}/GL/gl.h
-        ${OPENGL_INCLUDE_DIR}/GL/glx.h
-        ${OPENGL_INCLUDE_DIR}/GL/glext.h
-        #| grep "'(^DEF_PROXY\((gl[^u]|#)'"
-        > ${FILE_GEN_GL_DEF}
+    COMMAND ${TOOL_DEF_GENERATOR} ${OPENGL_gl_LIBRARY} > ${FILE_GEN_GL_DEF}
     DEPENDS ${TOOL_DEF_GENERATOR}
 )
 

@@ -4,7 +4,7 @@ project(primectl)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
 
 # Tools
-set(TOOL_DEF_GENERATOR "${CMAKE_SOURCE_DIR}/tools/gendefs.py")
+set(TOOL_DEF_GENERATOR "${CMAKE_SOURCE_DIR}/tools/gendefs.sh")
 set(TOOL_WRAP_NOWARN "${CMAKE_SOURCE_DIR}/tools/wrap.sh")
 
 # Common

@@ -1,2 +1,0 @@
-DEF_PROXY(fn2, int, (), (), return)
-DEF_PROXY(fn4, int, (), (), return)

@@ -1,8 +1,15 @@
 #include <stdio.h>
 #include <dlfcn.h>
+
+#include <GL/glext.h>
+/*#include <GL/glew.h>*/
+#include <GL/gl.h>
 #include <GL/glx.h>
 
 #include "libGL.h"
+
+/*#undef GLEW_GET_FUN*/
+/*#define GLEW_GET_FUN(...)*/
 
 #define BRACE_START (
 #define BRACE_END )

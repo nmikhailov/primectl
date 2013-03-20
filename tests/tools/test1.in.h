@@ -19,3 +19,4 @@ void gl_test4(const struct X ** farg1);
 void gl_test5(int, char*);
 extern void (*gl_test6(const int *farg1))( char* );
 void gl_test7(const double *farg1[16]);
+void gl_test8();

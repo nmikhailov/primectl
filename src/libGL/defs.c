@@ -4,9 +4,7 @@
 #include "libGL.h"
 
 #define DEF_FRWD(name)\
-void* getaddr_##name()  __asm__ (#name);\
-\
-__attribute__((visibility("default")))\
+void* name() __attribute__((visibility("default"),ifunc("getaddr_" #name)));\
 void* getaddr_##name() {\
     static void* fn = NULL;\
     if (fn == NULL) {\

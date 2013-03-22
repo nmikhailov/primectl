@@ -7,7 +7,7 @@ set(
 )
 
 # Set default visibility
-set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -fvisibility=hidden")
+set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -fvisibility=hidden -g")
 
 # Generate function definitions from opengl headers
 set(FILE_GEN_GL_DEF "${CMAKE_CURRENT_BINARY_DIR}/glx.def")

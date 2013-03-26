@@ -1,9 +1,13 @@
 #include <stdlib.h>
 #include <string.h>
-
 #include <dlfcn.h>
 
 #include "test_common.h"
+
+
+// Ignore warnings about pointer cast
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-pedantic"
 
 void init_functions() {
     void *libgl = dlopen("libGL.so", RTLD_LAZY);
@@ -32,3 +36,4 @@ void init_functions() {
     };
     memcpy(&gl, &d, sizeof(gldefs));
 }
+#pragma GCC diagnostic pop

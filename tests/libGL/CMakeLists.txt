@@ -1,25 +1,34 @@
-# Test export
-set(TOOL_CHECK_EXPORT "${CMAKE_CURRENT_SOURCE_DIR}/check_export.sh")
+# Packages
+find_package(PNG REQUIRED)
+find_package(Cairo REQUIRED)
+
+# Debug builds
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
 
 add_test(
     NAME LibGL.export
-    COMMAND ${TOOL_CHECK_EXPORT} ${OPENGL_gl_LIBRARY} $<TARGET_FILE:GL>
+    COMMAND ${CMAKE_COMMAND}
+            -DLIB_MY=$<TARGET_FILE:GL>
+            -DLIB_ORIG=${OPENGL_gl_LIBRARY}
+            -P ${CMAKE_CURRENT_SOURCE_DIR}/check_export.cmake
 )
 
-
 # Common
-find_package(PNG REQUIRED)
 add_library(test_common "test_common.c")
 target_link_libraries(test_common ${X11_LIBRARIES} ${PNG_LIBRARIES})
 
-# Test linked
-add_executable(test_linked "test_linked.c")
-target_link_libraries(test_linked ${OPENGL_LIBRARIES} test_common)
-add_test(
-    NAME LibGL.linked
-    COMMAND $<TARGET_FILE:test_linked>
-)
+macro(TEST_LIBGL NAME SOURCE LIBS)
+    add_executable(test_${NAME} ${SOURCE})
+    target_link_libraries(test_${NAME} ${LIBS})
+    add_test(
+        NAME LibGL.${NAME}
+        COMMAND ${CMAKE_COMMAND}
+                -DPROGRAMM=$<TARGET_FILE:test_${NAME}>
+                -DLIB_PATH=$<TARGET_FILE_DIR:GL>
+                -P ${CMAKE_CURRENT_SOURCE_DIR}/check_output.cmake
+    )
+endmacro()
 
-# Test dlopen
-add_executable(test_dlopen "test_dlopen.c")
-target_link_libraries(test_dlopen dl test_common)
+test_libgl(linked "test_linked.c" "${OPENGL_LIBRARIES};test_common")
+test_libgl(dlopen "test_dlopen.c" "dl;test_common")
+test_libgl(cairo "test_cairo.c" "${CAIRO_LIBRARIES}")

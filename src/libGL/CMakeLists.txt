@@ -34,3 +34,8 @@ include_directories(${GLIB_INCLUDE_DIRS} ${GIO_INCLUDE_DIRS})
 
 add_library(GL SHARED ${LIBGL_SRC} ${FILE_GEN_GL_DEF} ${FILES_GEN_DBUS})
 target_link_libraries(GL dl ${GLIB_LIBRARIES} ${GIO_LIBRARIES})
+set_target_properties(GL
+    PROPERTIES
+    VERSION 1.2.0
+    SOVERSION 1
+)

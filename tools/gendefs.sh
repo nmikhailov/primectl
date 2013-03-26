@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 banned=("_fini" "_init")
 text=$(nm -C -D "$@" | awk '{ if($2=="T") print $3 }' | sort)
 

@@ -52,7 +52,7 @@ void* load_lib(const char *path) { // Load shared library
     g_message("Loading %s", path);
 
     // libGL requires RTLD_GLOBAL: http://dri.sourceforge.net/doc/DRIuserguide.html
-    void *lib = dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
+    void *lib = dlopen(path, RTLD_NOW | RTLD_GLOBAL);
     if (!lib) {
         g_error("Can't load %s, error: %s. Abort.", path, dlerror());
         exit(1);

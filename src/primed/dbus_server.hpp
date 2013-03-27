@@ -3,6 +3,9 @@
 
 #include <dbus-c++/dbus.h>
 #include <cassert>
+#include <thread>
+#include <mutex>
+#include <unordered_set>
 
 #include "dbus_adaptor.hpp"
 
@@ -19,9 +22,15 @@ public:
     void hookSystemSuspend();
     void hookSystemResume();
     std::string getStatus();
-    std::map< uint32_t, std::vector< uint32_t > > getClients();
+    std::map< uint32_t, std::vector<uint32_t>> getClients();
     void setPower(const uint32_t& value);
     void reloadSettings();
+
+protected:
+    std::unordered_set<pid_t> m_clients;
+
+    std::mutex m_threads_mutex, m_clients_mutex;
+    std::vector<std::thread> m_threads;
 };
 
 

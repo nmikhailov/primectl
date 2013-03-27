@@ -83,7 +83,7 @@ void dbus_onload() {
     if (prime_new != -1) {
         // New value
         char buff[64];
-        snprintf(buff, 64, "%d", prime_new);
+        snprintf(buff, sizeof(buff), "%d", prime_new);
         setenv("DRI_PRIME", buff, 1);
 
         g_message("DRI_PRIME is set to: %s", buff);

@@ -9,7 +9,9 @@
 #include "common/config.h"
 #include "libGL.h"
 
-void dummy_log_handler(const gchar *a, GLogLevelFlags b, const gchar *c, gpointer d) {}
+void dummy_log_handler(const gchar *a, GLogLevelFlags b, const gchar *c,
+        gpointer d) {
+}
 
 void on_load(void) {
     GError *error = NULL;
@@ -17,21 +19,20 @@ void on_load(void) {
 
     // Set log level
     GLogLevelFlags log_level = G_LOG_LEVEL_ERROR | G_LOG_LEVEL_CRITICAL;
-    g_log_set_handler(G_LOG_DOMAIN, G_LOG_LEVEL_MASK, dummy_log_handler, NULL);
+    g_log_set_handler(G_LOG_DOMAIN, G_LOG_LEVEL_MASK, dummy_log_handler, NULL );
 
-    if (getenv("PLGL_DEBUG") != NULL) {
+    if (getenv("PLGL_DEBUG") != NULL ) {
         log_level |= G_LOG_LEVEL_MESSAGE;
     }
-    g_log_set_handler(G_LOG_DOMAIN, log_level, g_log_default_handler, NULL);
-
+    g_log_set_handler(G_LOG_DOMAIN, log_level, g_log_default_handler, NULL );
 
     // Connect to dbus
     g_type_init();
 
-    dbus_proxy = org_dri_prime_ctl_proxy_new_for_bus_sync(G_BUS_TYPE_SESSION,
-            0, DBUS_SERVER_NAME, DBUS_SERVER_PATH, NULL, &error);
+    dbus_proxy = org_dri_prime_ctl_proxy_new_for_bus_sync(G_BUS_TYPE_SESSION, 0,
+            DBUS_SERVER_NAME, DBUS_SERVER_PATH, NULL, &error);
 
-    if (dbus_proxy == NULL) {
+    if (dbus_proxy == NULL ) {
         g_critical("Failed to create dbus proxy: %s", error->message);
     } else {
         // Set timeout
@@ -41,12 +42,14 @@ void on_load(void) {
     // Connect to dbus server
     dbus_onload();
 
+    // Disconnect
+    g_object_unref(dbus_proxy);
+
     // Load original libGL
     libgl = load_lib(LIBGL_DEFAULT);
 
     g_message("Loaded");
 }
-
 
 void* load_lib(const char *path) { // Load shared library
     g_message("Loading %s", path);
@@ -64,29 +67,31 @@ void dbus_onload() {
     GError *error = NULL;
 
     // New DRI_PRIME value
-    guint prime_new = -1;
-
-    // Old(Current) DRI_PRIME value
-    gchar *prime_old = getenv("DRI_PRIME");
-    if (prime_old == NULL) {
-        prime_old = "";
-    }
+    guint prime_new = 0;
+    int flag_connected = 0;
 
     // Send dbus message
-    if (!org_dri_prime_ctl_call_hook_libgl_load_sync(dbus_proxy, getpid(), prime_old, &prime_new, NULL, &error)) {
+    if (!org_dri_prime_ctl_call_hook_libgl_load_sync(dbus_proxy, getpid(),
+            &prime_new, NULL, &error)) {
         g_critical("Can't send 'hook_load': %s", error->message);
         g_error_free(error);
-
-        prime_new = -1;
+    } else {
+        flag_connected = 1;
     }
 
-    if (prime_new != -1) {
-        // New value
-        char buff[64];
-        snprintf(buff, sizeof(buff), "%d", prime_new);
-        setenv("DRI_PRIME", buff, 1);
+    if (flag_connected) {
+        if (prime_new != -1) {
+            // New value
+            char buff[64];
+            snprintf(buff, sizeof(buff), "%d", prime_new);
+            setenv("DRI_PRIME", buff, 1);
 
-        g_message("DRI_PRIME is set to: %s", buff);
+            g_message("DRI_PRIME is set to: %s", buff);
+        } else {
+            unsetenv("DRI_PRIME");
+
+            g_message("DRI_PRIME is unset");
+        }
     } else {
         // Connection failed or no change required
         g_message("DRI_PRIME unchanged: %s", getenv("DRI_PRIME"));
@@ -96,13 +101,7 @@ void dbus_onload() {
 void on_unload(void) {
     g_message("%s", "Unloading...");
 
-    // Send dbus message
-    org_dri_prime_ctl_call_hook_libgl_unload(dbus_proxy, getpid(), NULL, NULL, NULL);
-    g_object_unref(dbus_proxy);
-
     // Unload libraries
     dlclose(libgl);
-
-    g_message("%s", "Unloaded");
 }
 

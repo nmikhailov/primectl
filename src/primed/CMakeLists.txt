@@ -4,6 +4,12 @@ set(
 
     "main.cpp"
     "dbus_server.cpp"
+    "client_matcher.cpp"
+    "client_pool.cpp"
+    "gpu_switch.cpp"
+    "process_tracker.cpp"
+    "settings.cpp"
+    "xserverctl.cpp"
 )
 
 # primed

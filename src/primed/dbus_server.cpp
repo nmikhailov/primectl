@@ -1,91 +1,74 @@
 #include <iostream>
-#include <chrono>
+#include <functional>
 
 #include "dbus_server.hpp"
 #include "signal.h"
 #include "common/config.h"
 
-DBusServer::DBusServer(DBus::Connection &connection) : DBus::ObjectAdaptor(connection, DBUS_SERVER_PATH) {
+DBusServer::DBusServer(DBus::Connection &connection, Settings &prop) :
+        DBus::ObjectAdaptor(connection, DBUS_SERVER_PATH),
+        m_settings(prop),
+        m_clients(prop),
+        m_matcher(prop),
+        m_pwrctl(prop),
+        m_tracker(prop),
+        m_xctl(prop) {
 
+    namespace pl = std::placeholders;
+
+    m_tracker.connectExitSignal(
+            std::bind(&ClientPool::removeClient, &m_clients, pl::_1), 0);
+
+    m_tracker.connectExitSignal([&](pid_t) {
+        if (m_clients.size() == 0) {
+            m_pwrctl.setSecondaryEnabled(false);
+        }
+    }, 1);
+
+    m_tracker.connectForkSignal(
+            std::bind(&ClientPool::addClient, &m_clients, pl::_1));
+    m_tracker.connectForkSignal(
+            std::bind(&ProcessTracker::startTracking, &m_tracker, pl::_1));
 }
 
 void DBusServer::hookXStarting(const uint32_t& pid) {
-    std::cout << "hookXStaring called. pid: " << pid << std::endl;
+    m_pwrctl.setSecondaryEnabled(true);
 }
 
-uint32_t DBusServer::hookLibglLoad(const uint32_t& pid, const std::string& dri_prime) {
-    std::cout << "hookLibglLoad called. pid: " << pid << " prime env: " << dri_prime << std::endl;
-    uint32_t res = -1;
-    // res = ???
-    //
-    std::lock_guard<std::mutex> lock(m_clients_mutex);
-    if (m_clients.empty()) {
-        std::cout << "discrete ON" << std::endl;
-    // echo ON > /sys/kernel/debug/vgaswitcheroo/switch
-    }
+uint32_t DBusServer::hookLibglLoad(const uint32_t& pid) {
+    std::cout << "hookLibglLoad called. pid: " << pid << std::endl;
 
-    if (res > 0) { // Using discrete adapter
-        std::lock_guard<std::mutex> clock(m_threads_mutex);
-        m_clients.insert(pid);
+    if (m_matcher.matches(pid)) {
+        m_pwrctl.setSecondaryEnabled(true);
+        m_xctl.initializeOffload(pid);
+        m_clients.addClient(pid);
+        m_tracker.startTracking(pid);
 
-        // Create thread & add to vector
-        m_threads.emplace_back([this, pid] {
-            while (true) {
-                if (kill(pid, 0)) {
-                    hookLibglUnload(pid);
-                    break;
-                }
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-            }
-        });
-    }
-
-    return res;
-}
-
-void DBusServer::hookLibglUnload(const uint32_t& pid) {
-    std::lock_guard<std::mutex> lock(m_clients_mutex);
-
-    std::cout << "hookLibglUnload called. pid: " << pid << std::endl;
-    if (m_clients.find(pid) == m_clients.end()) {
-        std::cout << "already removed" << std::endl;
-        return;
-    }
-    m_clients.erase(pid);
-
-    if (m_clients.empty()) {
-        // Turn OFF
-        std::cout << "discrete OFF" << std::endl;
+        return 1; // ?
+    } else {
+        return -1;
     }
 }
-
 
 void DBusServer::hookSystemSuspend() {
+    m_pwrctl.setSecondaryEnabled(true);
 }
 
 void DBusServer::hookSystemResume() {
+    if (m_clients.size() == 0) {
+        m_pwrctl.setSecondaryEnabled(false);
+    }
 }
 
 std::string DBusServer::getStatus() {
     return "<STATUS_STRING>";
 }
 
-std::map<uint32_t, std::vector<uint32_t>> DBusServer::getClients() {
-    std::lock_guard<std::mutex> lock(m_clients_mutex);
-
-    std::map<uint32_t, std::vector<uint32_t>> res;
-    if (!m_clients.empty()) {
-        res[0].resize(m_clients.size());
-        std::copy(m_clients.begin(), m_clients.end(), res[0].begin());
-    }
-
-    return res;
+std::vector<uint32_t> DBusServer::getClients() {
+    return m_clients.getClients();
 }
 
 void DBusServer::setPower(const uint32_t& value) {
-
+    //m_switcher.setPower()
 }
 
-void DBusServer::reloadSettings() {
-
-}

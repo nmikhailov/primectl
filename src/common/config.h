@@ -4,5 +4,6 @@
 #define LIBGL_DEFAULT "/usr/lib/libGL.so"
 #define DBUS_SERVER_NAME "org.dri.PrimeCtl"
 #define DBUS_SERVER_PATH "/org/dri/PrimeCtl"
+#define PRIMED_SETTINGS_FILENAME "/etc/primed.conf"
 
 #endif

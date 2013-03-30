@@ -16,13 +16,8 @@
 
     <method name="hookLibglLoad">
       <arg type="u" name="pid" direction="in" />
-      <arg type="s" name="dri_prime" direction="in" />
 
       <arg type="u" name="new_dri_prime" direction="out" />
-    </method>
-
-    <method name="hookLibglUnload">
-      <arg type="u" name="pid" direction="in" />
     </method>
 
     <!-- System events -->
@@ -37,15 +32,13 @@
     </method>
 
     <method name="getClients">
-      <!-- Returns map X_PID to array_of_client_pids -->
-      <arg type="a{uau}" name="value" direction="out" />
+      <!-- Returns array of client pid -->
+      <arg type="au" name="value" direction="out" />
     </method>
 
     <method name="setPower">
       <arg type="u" name="value" direction="in" />
     </method>
-
-    <method name="reloadSettings" />
 
     <signal name="onStatusChanged" />
 

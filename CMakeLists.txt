@@ -7,10 +7,6 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
 set(TOOL_DEF_GENERATOR "${CMAKE_SOURCE_DIR}/tools/gendefs.sh")
 set(TOOL_WRAP_NOWARN "${CMAKE_SOURCE_DIR}/tools/wrap.sh")
 
-# Common
-set(COMMON_SRC_DIR  "${CMAKE_SOURCE_DIR}/src/common/")
-set(FILE_DBUS_INTROSPECT  "${COMMON_SRC_DIR}/dbus-introspect.xml")
-
 # Build flags
 set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -Wall -pedantic -std=c99")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -std=c++11")

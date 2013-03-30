@@ -22,7 +22,7 @@ public:
     void addClient(pid_t pid);
     void removeClient(pid_t pid);
 
-    std::vector<uint32_t> getClients() const;
+    std::vector<int32_t> getClients() const;
     size_t size() const;
 
 protected:

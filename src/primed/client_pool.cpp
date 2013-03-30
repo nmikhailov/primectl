@@ -28,10 +28,10 @@ void ClientPool::removeClient(pid_t pid) {
     m_clients.erase(pid);
 }
 
-std::vector<uint32_t> ClientPool::getClients() const {
+std::vector<int32_t> ClientPool::getClients() const {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    std::vector<uint32_t> res(m_clients.begin(), m_clients.end());
+    std::vector<int32_t> res(m_clients.begin(), m_clients.end());
 
     return res;
 }

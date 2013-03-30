@@ -25,13 +25,13 @@ class DBusServer: public org::dri::PrimeCtl_adaptor,
 public:
     DBusServer(DBus::Connection &connection, Settings &prop);
 
-    void hookXStarting(const uint32_t& pid) override;
-    uint32_t hookLibglLoad(const uint32_t& pid) override;
+    void hookXStarting(const int32_t& pid) override;
+    int32_t hookLibglLoad(const int32_t& pid) override;
     void hookSystemSuspend() override;
     void hookSystemResume() override;
     std::string getStatus() override;
-    std::vector<uint32_t> getClients() override;
-    void setPower(const uint32_t& value) override;
+    std::vector<int32_t> getClients() override;
+    void setPower(const int32_t& value) override;
 
 protected:
     Settings &m_settings;

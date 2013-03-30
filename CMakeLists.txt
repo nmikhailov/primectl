@@ -16,8 +16,7 @@ add_definitions(-D_GNU_SOURCE)
 find_package(OpenGL REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(DBusCpp REQUIRED)
-find_package(Glib REQUIRED)
-find_package(GIO REQUIRED)
+find_package(DBus REQUIRED)
 
 # Testing
 enable_testing()

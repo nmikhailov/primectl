@@ -5,19 +5,19 @@
     <!-- X server communication -->
 
     <method name="hookXStarting">
-      <arg type="u" name="pid" direction="in" />
+      <arg type="i" name="pid" direction="in" />
     </method>
 
     <!--<method name="hookXInitialized">-->
-      <!--<arg type="u" name="pid" direction="in" />-->
+      <!--<arg type="i" name="pid" direction="in" />-->
     <!--</method>-->
 
     <!-- libGL communication -->
 
     <method name="hookLibglLoad">
-      <arg type="u" name="pid" direction="in" />
+      <arg type="i" name="pid" direction="in" />
 
-      <arg type="u" name="new_dri_prime" direction="out" />
+      <arg type="i" name="new_dri_prime" direction="out" />
     </method>
 
     <!-- System events -->
@@ -33,11 +33,11 @@
 
     <method name="getClients">
       <!-- Returns array of client pid -->
-      <arg type="au" name="value" direction="out" />
+      <arg type="ai" name="value" direction="out" />
     </method>
 
     <method name="setPower">
-      <arg type="u" name="value" direction="in" />
+      <arg type="i" name="value" direction="in" />
     </method>
 
     <signal name="onStatusChanged" />

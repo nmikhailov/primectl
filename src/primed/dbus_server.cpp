@@ -31,11 +31,11 @@ DBusServer::DBusServer(DBus::Connection &connection, Settings &prop) :
             std::bind(&ProcessTracker::startTracking, &m_tracker, pl::_1));
 }
 
-void DBusServer::hookXStarting(const uint32_t& pid) {
+void DBusServer::hookXStarting(const int32_t& pid) {
     m_pwrctl.setSecondaryEnabled(true);
 }
 
-uint32_t DBusServer::hookLibglLoad(const uint32_t& pid) {
+int32_t DBusServer::hookLibglLoad(const int32_t& pid) {
     std::cout << "hookLibglLoad called. pid: " << pid << std::endl;
 
     if (m_matcher.matches(pid)) {
@@ -64,11 +64,11 @@ std::string DBusServer::getStatus() {
     return "<STATUS_STRING>";
 }
 
-std::vector<uint32_t> DBusServer::getClients() {
+std::vector<int32_t> DBusServer::getClients() {
     return m_clients.getClients();
 }
 
-void DBusServer::setPower(const uint32_t& value) {
+void DBusServer::setPower(const int32_t& value) {
     //m_switcher.setPower()
 }
 

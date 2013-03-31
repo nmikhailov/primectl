@@ -10,6 +10,10 @@
 
 #include <unistd.h>
 
+#define BUS_ERROR_CONNECT  1
+#define BUS_ERROR_SEND     2
+#define BUS_ERROR_RECIVE   3
+
 int dbus_send_hook_load(pid_t pid, int *ret);
 
 

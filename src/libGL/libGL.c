@@ -5,10 +5,24 @@
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <stdarg.h>
 
 #include "common/config.h"
 #include "libGL.h"
 #include "dbus.h"
+
+#define ENV_VARIABLE "DRI_PRIME"
+
+static void dbg_printf(int lvl, const char *fmt, ...) {
+    if (lvl > 0 || getenv("PLGL_DEBUG")) {
+        va_list ap;
+        va_start(ap, fmt);
+        fprintf(stderr, "[PLGL] ");
+        vfprintf(stderr, fmt, ap);
+        fprintf(stderr, "\n");
+        va_end(ap);
+    }
+}
 
 void on_load(void) {
     // Connect to dbus
@@ -16,7 +30,7 @@ void on_load(void) {
     if (!dbus_send_hook_load(getpid(), &new_driprime)) {
         flag_connected = 1;
     } else {
-        fprintf(stderr, "PLGL: Error, can't connect to dbus server");
+        dbg_printf(1, "Error, can't connect to dbus server");
     }
 
     if (flag_connected) {
@@ -24,41 +38,39 @@ void on_load(void) {
             // New value
             char buff[64];
             snprintf(buff, sizeof(buff), "%d", new_driprime);
-            setenv("DRI_PRIME", buff, 1);
+            setenv(ENV_VARIABLE, buff, 1);
 
-            fprintf(stderr, "DRI_PRIME is set to: %s", buff);
+            dbg_printf(0, ENV_VARIABLE " is set to: %s", buff);
         } else {
-            fprintf(stderr, "DRI_PRIME");
+            unsetenv(ENV_VARIABLE);
 
-            fprintf(stderr, "DRI_PRIME is unset");
+            dbg_printf(0, ENV_VARIABLE " is unset");
         }
     } else {
-        // Connection failed or no change required
-        fprintf(stderr, "DRI_PRIME unchanged: %s", getenv("DRI_PRIME"));
+        // Connection to dbus failed
+        dbg_printf(0, "%s unchanged: %s", ENV_VARIABLE, getenv(ENV_VARIABLE));
     }
 
     // Load original libGL
     libgl = load_lib(LIBGL_DEFAULT);
 
-    fprintf(stderr, "Loaded");
+    dbg_printf(0, "Loaded");
 }
 
-void* load_lib(const char *path) { // Load shared library
-    fprintf(stderr, "Loading %s", path);
+void* load_lib(const char *path) {
+    dbg_printf(0, "Loading %s", path);
 
     // libGL requires RTLD_GLOBAL: http://dri.sourceforge.net/doc/DRIuserguide.html
     void *lib = dlopen(path, RTLD_NOW | RTLD_GLOBAL);
     if (!lib) {
-        fprintf(stderr, "Can't load %s, error: %s. Abort.", path, dlerror());
-        exit(1);
+        dbg_printf(0, "Can't load %s, error: %s. Abort.", path, dlerror());
+        exit(EXIT_FAILURE);
     }
     return lib;
 }
 
 void on_unload(void) {
-    fprintf(stderr, "%s", "Unloading...");
-
-    // Unload libraries
+    dbg_printf(0, "%s", "Unloading...");
     dlclose(libgl);
 }
 

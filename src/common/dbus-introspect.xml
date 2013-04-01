@@ -8,10 +8,6 @@
       <arg type="i" name="pid" direction="in" />
     </method>
 
-    <!--<method name="hookXInitialized">-->
-      <!--<arg type="i" name="pid" direction="in" />-->
-    <!--</method>-->
-
     <!-- libGL communication -->
 
     <method name="hookLibglLoad">
@@ -28,7 +24,7 @@
     <!-- User communication -->
 
     <method name="getStatus">
-      <arg type="s" name="value" direction="out" />
+      <arg type="a{ss}" name="value" direction="out" />
     </method>
 
     <method name="getClients">

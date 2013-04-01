@@ -19,6 +19,8 @@ public:
     bool enabled() const;
 
 protected:
+    std::string getDebugfsMountPoint() const;
+
     Settings &m_settings;
 };
 

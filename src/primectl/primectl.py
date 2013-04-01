@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import dbus
 
 
@@ -11,16 +11,19 @@ class PrimeCtl(object):
         self.primectl = dbus.Interface(self.bus_obj, "org.dri.PrimeCtl")
 
     def status(self):
-        print(self.primectl.getStatus())
+        stat = self.primectl.getStatus()
+        for val in stat:
+            print(val, stat[val])
+
         clients = self.primectl.getClients()
 
         if len(clients) == 0:
             print("No clients running")
+        else:
+            print("{} clients:".format(len(clients)))
 
-        for xpid, pids in clients.items():
-            print("X Server %d, pid %d:" % (xpid, 0))
-            for pid in pids:
-                print("  Client pid %d:" % (pid))
+        for pid in clients:
+            print("  pid %d:" % (pid))
 
 
 def main():

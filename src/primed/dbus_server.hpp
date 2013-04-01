@@ -29,7 +29,7 @@ public:
     int32_t hookLibglLoad(const int32_t& pid) override;
     void hookSystemSuspend() override;
     void hookSystemResume() override;
-    std::string getStatus() override;
+    std::map<std::string, std::string> getStatus() override;
     std::vector<int32_t> getClients() override;
     void setPower(const int32_t& value) override;
 

@@ -14,10 +14,10 @@ DBusServer::DBusServer(DBus::Connection &connection, Settings &prop) :
         m_tracker(prop),
         m_xctl(prop) {
 
-    namespace pl = std::placeholders;
+    using std::placeholders::_1;
 
     m_tracker.connectExitSignal(
-            std::bind(&ClientPool::removeClient, &m_clients, pl::_1), 0);
+            std::bind(&ClientPool::removeClient, &m_clients, _1), 0);
 
     m_tracker.connectExitSignal([&](pid_t) {
         if (m_clients.size() == 0) {
@@ -26,13 +26,15 @@ DBusServer::DBusServer(DBus::Connection &connection, Settings &prop) :
     }, 1);
 
     m_tracker.connectForkSignal(
-            std::bind(&ClientPool::addClient, &m_clients, pl::_1));
+            std::bind(&ClientPool::addClient, &m_clients, _1));
     m_tracker.connectForkSignal(
-            std::bind(&ProcessTracker::startTracking, &m_tracker, pl::_1));
+            std::bind(&ProcessTracker::startTracking, &m_tracker, _1));
 }
 
 void DBusServer::hookXStarting(const int32_t& pid) {
     m_pwrctl.setSecondaryEnabled(true);
+    // Delayed update
+
 }
 
 int32_t DBusServer::hookLibglLoad(const int32_t& pid) {
@@ -60,8 +62,11 @@ void DBusServer::hookSystemResume() {
     }
 }
 
-std::string DBusServer::getStatus() {
-    return "<STATUS_STRING>";
+std::map<std::string, std::string> DBusServer::getStatus() {
+    std::map<std::string, std::string> res;
+    res["power"] = m_pwrctl.enabled() ? "ON" : "OFF";
+
+    return res;
 }
 
 std::vector<int32_t> DBusServer::getClients() {

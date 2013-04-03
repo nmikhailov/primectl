@@ -9,7 +9,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <boost/algorithm/string/split.hpp>
 
 #include <mntent.h>
 #include <sys/stat.h>
@@ -53,6 +52,8 @@ bool GPUSwitch::enabled() const {
 std::string GPUSwitch::getDebugfsMountPoint() const {
     std::string mountdir;
     bool mounted = false;
+    // TODO: error handling
+    // TODO: check for debugfs kernel support
 
     FILE *f = setmntent("/etc/mtab", "r");
     if (!f) {

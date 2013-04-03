@@ -7,6 +7,8 @@
 
 #include "xserverctl.hpp"
 
+#include "utils.hpp"
+
 XServerCtl::XServerCtl(Settings& prop) :
         m_settings(prop) {
 }
@@ -15,4 +17,5 @@ XServerCtl::~XServerCtl() {
 }
 
 void XServerCtl::initializeOffload(pid_t client_id) {
+    utils::getEnvDict(client_id);
 }

@@ -8,8 +8,8 @@ set(TOOL_DEF_GENERATOR "${CMAKE_SOURCE_DIR}/tools/gendefs.sh")
 set(TOOL_WRAP_NOWARN "${CMAKE_SOURCE_DIR}/tools/wrap.sh")
 
 # Build flags
-set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -Wall -pedantic -std=c99")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -std=c++11")
+set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -Wall -pedantic -std=c99 -O2")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -std=c++11 -O2")
 add_definitions(-D_GNU_SOURCE)
 
 # Packages

@@ -1,15 +1,17 @@
 # Source list
-set(
-    PRIMED_SRC
-
-    "main.cpp"
-    "dbus_server.cpp"
+set(PRIMED_BASE_SRC
     "client_matcher.cpp"
     "client_pool.cpp"
     "gpu_switch.cpp"
     "process_tracker.cpp"
     "settings.cpp"
     "xserverctl.cpp"
+    "utils.cpp"
+)
+
+set(PRIMED_SRC
+    "main.cpp"
+    "dbus_server.cpp"
 )
 
 # primed
@@ -26,5 +28,7 @@ add_custom_command (
 
 include_directories(${DBUSCPP_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
+add_library(primed_base ${PRIMED_BASE_SRC})
+
 add_executable(primed ${PRIMED_SRC} ${FILE_GEN_DBUS_ADAPTOR})
-target_link_libraries(primed ${DBUSCPP_LIBRARIES})
+target_link_libraries(primed primed_base ${DBUSCPP_LIBRARIES})
